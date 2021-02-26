@@ -1,0 +1,6 @@
+string mission_id
+---
+bool my_mission					# true if agent has that mission, otherwise false
+string[] completed_tasks
+string[] scheduled_methods
+string[] task_labels

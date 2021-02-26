@@ -1,0 +1,12 @@
+string mission_id
+string type				# type of info: {sched, non-sched} - from scheduled or non scheduled task
+string ag_addr 			# agent's address (namespace)
+string task_label
+---
+bool my_mission				# false if agent doesn't have mission mission_id
+bool my_task                # false if agent doesn't have task in its structure
+string json_outcome_q		# task outcome (quality, duration, cost)
+string json_outcome_d
+string json_outcome_c
+float64[] outcome_ev 		# outcome expected values (quality, duration, cost) -> only this value is used for non-sched type
+float64 end_time

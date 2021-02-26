@@ -1,0 +1,5 @@
+string mission_id
+string[] neighbor_label
+string[] neighbor_address
+---
+bool done 			# True if mission is assessed successfully, False if mission should be canceled

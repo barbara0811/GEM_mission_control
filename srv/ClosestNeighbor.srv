@@ -1,0 +1,5 @@
+string mission_id
+string agent_from			# agent's namespace
+string type					# type : {establish, cancel}
+---
+bool done					# False - if the closestNeighbor bond is not established

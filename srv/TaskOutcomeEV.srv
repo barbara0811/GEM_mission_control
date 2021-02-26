@@ -1,0 +1,6 @@
+string mission_id
+string root_task
+string criteria
+---
+string[] all_tasks				# list of all task labels
+string json_task_outcome_ev		# outcomes of tasks listed in all_tasks (in the same order)

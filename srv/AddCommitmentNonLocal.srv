@@ -1,0 +1,7 @@
+string mission_id
+string ag_addr				# agent's address (namespace)
+string task_label_from
+string task_label_to
+float64 time				# committed time
+---
+bool done

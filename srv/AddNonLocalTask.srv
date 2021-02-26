@@ -1,0 +1,6 @@
+string mission_id
+string task_label
+string supertask_label
+float64[] outcome_ev
+---
+bool done

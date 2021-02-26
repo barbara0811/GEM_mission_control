@@ -1,0 +1,10 @@
+string mission_id
+string[] task_labels			# scheduled tasks, in order
+float64[] start_times
+float64[] end_times
+string[] constrained_tasks		# task that have earliest start time constraint
+float64[] task_est
+---
+string[] task_labels
+float64[] start_times
+float64[] end_times

@@ -1,0 +1,7 @@
+string mission_id
+string type 			# commitment type = {deadline, earliest_start_time}
+string task_label
+float64 time			# time of commitment
+bool break_time			# allows to break deadlines and earliest start times
+---
+bool done

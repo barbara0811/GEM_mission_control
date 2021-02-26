@@ -1,0 +1,6 @@
+string mission_id
+string[] neighbor_address
+string neighbor_task_labels		# json data
+---
+bool done 			# True if mission is assessed successfully, False if mission should be canceled
+string[] to_remove

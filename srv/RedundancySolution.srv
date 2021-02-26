@@ -1,0 +1,6 @@
+string ag_addr					# agent's address (namespace)
+string mission_id			
+string task_label
+string best_ag_addr 
+---
+bool done

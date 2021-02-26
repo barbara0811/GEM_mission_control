@@ -1,0 +1,5 @@
+string mission_id
+string root_task
+string criteria
+---
+bool done
