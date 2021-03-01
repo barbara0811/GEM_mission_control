@@ -6,7 +6,8 @@ import copy
 from collections import Counter
 
 from utilities import helper_functions, my_logger
-from taems import TaemsTree, Interrelationship, TaskGroup, Method
+from ummc_agent_lib.taems.taems import TaemsTree, TaskGroup, Method
+from ummc_agent_lib.taems.interrelationships import Interrelationship
 
 logger = my_logger.CustomLogger('SIM')
 

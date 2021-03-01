@@ -9,7 +9,8 @@ from hashlib import md5
 from math import factorial, floor
 
 import simulator
-from taems import Interrelationship, TaemsTree
+from ummc_agent_lib.taems.taems import TaemsTree
+from ummc_agent_lib.taems.interrelationships import Interrelationship
 from utilities import my_logger
 
 logger = my_logger.CustomLogger('GENETIC')

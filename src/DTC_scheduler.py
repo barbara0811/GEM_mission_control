@@ -37,13 +37,13 @@ from sys import maxint
 from itertools import izip
 from datetime import datetime
 
-import taems
+from ummc_agent_lib.taems import taems
 import loader
 import genetic_algorithm
 from utilities import helper_functions, my_logger
 
-from gpgp_agent.msg import TaskStructureUpdate, MissionCtrlMsg
-from gpgp_agent.srv import Reschedule, AddNonLocalTask, RemoveTask, AddCommitmentLocal, TaskOutcomeEV, ExecuteTask, \
+from ummc_agent.msg import TaskStructureUpdate, MissionCtrlMsg
+from ummc_agent.srv import Reschedule, AddNonLocalTask, RemoveTask, AddCommitmentLocal, TaskOutcomeEV, ExecuteTask, \
     RescheduleResponse
 
 logger = my_logger.CustomLogger()

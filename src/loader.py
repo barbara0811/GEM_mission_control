@@ -7,8 +7,9 @@ import random
 import string
 from copy import deepcopy
 
-from taems import ConsumableResource, IRConsumes, IRDisables, IREnables, IRFacilitates, IRHinders, IRLimits, IRProduces, \
-    Method, NonConsumableResource, TaemsTree, TaskGroup
+from ummc_agent_lib.taems.taems import Method, TaemsTree, TaskGroup
+from ummc_agent_lib.taems.resources import ConsumableResource, NonConsumableResource
+from ummc_agent_lib.taems.interrelationships import IRConsumes, IRDisables, IREnables, IRFacilitates, IRHinders, IRLimits, IRProduces
 
 
 class Loader(object):
