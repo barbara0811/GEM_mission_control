@@ -1,22 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Initializes ROS node for GPGP coordination.
+Initializes ROS node for UMMC mission coordinator.
 
 Summary:
 
     Publications:
-         * /peer_discovery [gpgp_agent/HelloMsg]
-         * /namespace/mission_enabled_tasks [gpgp_agent/MissionEnabledTasks]
-         * /mission_control [gpgp_agent/MissionCtrlMsg]
-         * /namespace/mission_control [gpgp_agent/MissionCtrlMsg]
+         * /peer_discovery [ummc_agent/HelloMsg]
+         * /namespace/mission_enabled_tasks [ummc_agent/MissionEnabledTasks]
+         * /mission_control [ummc_agent/MissionCtrlMsg]
+         * /namespace/mission_control [ummc_agent/MissionCtrlMsg]
 
     Subscriptions:
          * /gazebo/model_states [unknown type] ###TODO -- unified topic named /namespace/position
                                                 that is the same for simulation and real system
-         * /namespace/task_structure_update [gpgp_agent/TaskStructureUpdate]
-         * /peer_discovery [gpgp_agent/HelloMsg]
-         * /mission_control [gpgp_agent/MissionCtrlMsg]
+         * /namespace/task_structure_update [ummc_agent/TaskStructureUpdate]
+         * /peer_discovery [ummc_agent/HelloMsg]
+         * /mission_control [ummc_agent/MissionCtrlMsg]
 
     Services:
          * /namespace/task_info
@@ -47,14 +47,14 @@ import os
 import numpy as np
 from copy import deepcopy
 
-import taems
+from ummc_agent_lib.taems import taems
 import loader
 import simulator
 from DTC_scheduler import Criteria
 from utilities import helper_functions, my_logger
 from branch_and_bound import BranchAndBoundOptimizer
-from gpgp_agent.msg import HelloMsg, MissionCtrlMsg, MissionEnabledTasks, TaskStructureUpdate
-from gpgp_agent.srv import AddCommitmentLocal, AddCommitmentNonLocal, AddNonLocalTask, AdjustScheduleTimes, \
+from ummc_agent.msg import HelloMsg, MissionCtrlMsg, MissionEnabledTasks, TaskStructureUpdate
+from ummc_agent.srv import AddCommitmentLocal, AddCommitmentNonLocal, AddNonLocalTask, AdjustScheduleTimes, \
     AssessMissionTasks, ExecuteTask, GetPose, GetPosition, MissionEarliestStart, MissionInfo, MissionStatus, \
     ReassessMissionTasks, RedundancySolution, RegisterFeedbackRequest, RemoveTask, Reschedule, RescheduleResponse, \
     ScheduleOK, SignalMissionAbort, TaskInfo, TaskInfoRequest, TaskOutcomeEV
@@ -63,7 +63,7 @@ logger = my_logger.CustomLogger()
 rospack = rospkg.RosPack()
 
 # noinspection PyMissingOrEmptyDocstring
-class GPGPCoordinator(object):
+class MissionCoordinator(object):
 
     def __init__(self):
         # Set the name for the custom logger.
@@ -145,6 +145,7 @@ class GPGPCoordinator(object):
         # Execution publishers, subscribers and services.
         self.missionEnabledTasksPub = rospy.Publisher("mission_enabled_tasks", MissionEnabledTasks, queue_size=1)
         rospy.Service("register_executed_task", ExecuteTask, self.register_executed_task_srv)
+        rospy.spin()  #TODO remove this
 
     def load_tree(self, mission_id, task_label):
         """
@@ -286,9 +287,12 @@ class GPGPCoordinator(object):
         """
         mission_sign = root_task + "[" + str(mission_id) + "]"
         self.startTime[mission_sign] = rospy.get_time()
+        print "..."
         rospy.loginfo('***NEW MISSION***:\n{id: %s, task: %s, criteria: %s}\n', mission_sign, root_task, criteria)
         self.init_mission_structures(mission_sign)
 
+        raw_input("##")
+        return
         # Send mission control message to agent's nodes.
         msg = MissionCtrlMsg()
         msg.type = "StartMission"
@@ -1921,10 +1925,12 @@ class GPGPCoordinator(object):
         """
 
         mission_sign = msg.root_task + "[" + str(msg.mission_id) + "]"
-
-        if msg.type == "StartMission":
+        if msg.type == "NewMission":
+            print rospy.get_namespace()
             if msg.ag_addr == rospy.get_namespace():
+                print "."
                 if mission_sign not in self.missions.keys():
+                    print "ya"
                     if mission_sign in self.missionStatus.keys():
                         if self.missionStatus[mission_sign] == "no_schedule":
                             return
@@ -2469,6 +2475,6 @@ if __name__ == "__main__":
     rospy.init_node("coordinator")
 
     try:
-        coordination = GPGPCoordinator()
+        coordination = MissionCoordinator()
     except rospy.ROSInterruptException:
         pass
