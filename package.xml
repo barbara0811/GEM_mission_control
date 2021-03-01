@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>ummc_agent</name>
+  <name>GEM_mission_control</name>
   <version>0.0.0</version>
-  <description>The ummc_agent package</description>
+  <description>The GEM_mission_control package</description>
   <maintainer email="barbara.arbanas@fer.hr">barbara</maintainer>
 
   <!-- One license tag required, multiple allowed, one license per tag -->

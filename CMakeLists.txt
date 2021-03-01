@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(ummc_agent)
+project(GEM_mission_control)
 
 ## Find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
@@ -81,7 +81,7 @@ generate_messages(
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES gpgp_agent
+#  LIBRARIES GEM_mission_control
 #   CATKIN_DEPENDS message_runtime actionlib_msgs
 #  DEPENDS system_lib
 )
@@ -95,19 +95,19 @@ catkin_package(
 # include_directories(include)
 
 ## Declare a cpp library
-# add_library(gpgp_agent
-#   src/${PROJECT_NAME}/gpgp_agent.cpp
+# add_library(GEM_mission_control
+#   src/${PROJECT_NAME}/GEM_mission_control.cpp
 # )
 
 ## Declare a cpp executable
-# add_executable(gpgp_agent_node src/gpgp_agent_node.cpp)
+# add_executable(GEM_mission_control_node src/GEM_mission_control_node.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-# add_dependencies(gpgp_agent_node gpgp_agent_generate_messages_cpp)
+# add_dependencies(GEM_mission_control_node GEM_mission_control_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(gpgp_agent_node
+# target_link_libraries(GEM_mission_control_node
 #   ${catkin_LIBRARIES}
 # )
 
@@ -126,7 +126,7 @@ catkin_package(
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS gpgp_agent gpgp_agent_node
+# install(TARGETS GEM_mission_control GEM_mission_control_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -151,7 +151,7 @@ catkin_package(
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_gpgp_agent.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_GEM_mission_control.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()
