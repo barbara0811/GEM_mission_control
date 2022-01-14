@@ -34,7 +34,7 @@ class Interrelationship(object):
         self.type = self.IR_types['none']
 
     def __repr__(self):
-        return '{}_{}_{}{}'.format(self.IR_names[self.type], self.From, self.To, '_active' if self.active else '')
+        return '{}_{}->{}{}'.format(self.IR_names[self.type], self.From, self.To, '_active' if self.active else '')
 
     def to_dot(self, **kwargs):
         """

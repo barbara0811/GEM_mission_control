@@ -10,7 +10,7 @@ from std_msgs.msg import String
 
 from gpgp_agent.msg import MissionCtrlMsg, MissionEnabledTasks, TaskStructureUpdate
 from gpgp_agent.srv import ScheduleOK, AdjustScheduleTimes, MissionEarliestStart, ExecuteTask, DelaySchedule, GetPose
-from utilities import my_logger
+from gem_mission_control_lib.utilities import my_logger
 
 logger = my_logger.CustomLogger()
 

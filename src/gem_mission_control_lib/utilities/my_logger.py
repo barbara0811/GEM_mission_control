@@ -12,7 +12,7 @@ logging.DEBUGV = 9
 logging.addLevelName(logging.DEBUGV, "DEBUGV")
 logging.__all__ += ['DEBUGV']
 
-#These are the sequences need to get colored ouput
+# These are the sequences need to get colored ouput
 RESET_SEQ = "\033[0m"
 BOLD_SEQ = "\033[1m"
 
@@ -34,6 +34,7 @@ LEVELS = {
     'DEBUGV': logging.DEBUGV
 }
 
+
 class ColoredFormatter(logging.Formatter):
     def __init__(self, msg):
         logging.Formatter.__init__(self, msg)
@@ -53,6 +54,7 @@ class ColoredFormatter(logging.Formatter):
         if skip_line:
             result = '\n' + result
         return result
+
 
 class CustomLogger(logging.Logger):
     def __init__(self, name='default', level='DEBUG'):
@@ -87,9 +89,8 @@ if __name__ == '__main__':
 
     logger = CustomLogger('test')
 
-    logger.name = 'empty'
+    logger.name = 'test_logger'
 
-    # 'application' code
     logger.debug('debug message')
 
     logger.info('\ninfo message')

@@ -5,9 +5,9 @@ __author__ = "barbanas"
 import copy
 from collections import Counter
 
-from utilities import helper_functions, my_logger
-from ummc_agent_lib.taems.taems import TaemsTree, TaskGroup, Method
-from ummc_agent_lib.taems.interrelationships import Interrelationship
+from gem_mission_control_lib.utilities import helper_functions, my_logger
+from gem_mission_control_lib.taems.taems import TaemsTree, TaskGroup, Method
+from gem_mission_control_lib.taems.interrelationships import Interrelationship
 
 logger = my_logger.CustomLogger('SIM')
 

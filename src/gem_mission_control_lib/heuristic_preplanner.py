@@ -37,13 +37,13 @@ from sys import maxint
 from itertools import izip
 from datetime import datetime
 
-from ummc_agent_lib.taems import taems
+from gem_mission_control_lib.taems import taems
 import loader
 import genetic_algorithm
-from utilities import helper_functions, my_logger
+from gem_mission_control_lib.utilities import helper_functions, my_logger
 
-from ummc_agent.msg import TaskStructureUpdate, MissionCtrlMsg
-from ummc_agent.srv import Reschedule, AddNonLocalTask, RemoveTask, AddCommitmentLocal, TaskOutcomeEV, ExecuteTask, \
+from gem_mission_control.msg import TaskStructureUpdate, MissionCtrlMsg
+from gem_mission_control.srv import Reschedule, AddNonLocalTask, RemoveTask, AddCommitmentLocal, TaskOutcomeEV, ExecuteTask, \
     RescheduleResponse
 
 logger = my_logger.CustomLogger()
@@ -980,8 +980,12 @@ class Plan(object):
         self.costEV = []
         self.durationEV = []
 
-        i = 0
-        for alternative in self.childrenAlternativeIndex:
+        print len(self.alternatives)
+        print qaf
+        for i in range(len(self.alternatives)):
+            # print len(self.childrenAlternativeIndex[i])
+            # raw_input("")
+            alternative = self.childrenAlternativeIndex[i]
             temp = self.calc_QCD(qaf, alternative, plans, disjunctTaskSets)
 
             self.quality.append(temp[0])
@@ -991,8 +995,6 @@ class Plan(object):
             self.qualityEV.append(helper_functions.calcExpectedValue(self.quality[i]))
             self.costEV.append(helper_functions.calcExpectedValue(self.cost[i]))
             self.durationEV.append(helper_functions.calcExpectedValue(self.duration[i]))
-
-            i += 1
 
     def calc_QCD(self, qaf, alternative, plans, disjunctTaskSets):
         """
@@ -1012,24 +1014,26 @@ class Plan(object):
         durationDistributions = []
 
         childWithZeroQ = False
-        d = [[] for i in range(len(disjunctTaskSets))]
-        durDistr = [[] for i in range(len(disjunctTaskSets))]
+        # d = [[] for i in range(len(disjunctTaskSets))]
+        # durDistr = [[] for i in range(len(disjunctTaskSets))]
         for i in alternative:
             child = i[0]
             ind = -1
-            for j in range(len(disjunctTaskSets)):
-                if self.subtasks[child] in disjunctTaskSets[j]:
-                    d[j].append(child)
-                    ind = j
-
+            # st = rospy.get_time()
+            # for j in range(len(disjunctTaskSets)):
+            #     print j
+            #     if self.subtasks[child] in disjunctTaskSets[j]:
+            #         d[j].append(child)
+            #         ind = j
+            # print rospy.get_time() - st
             childsAlternative = i[1]
             qualityDistributions.append(plans[self.subtasks[child]].quality[childsAlternative])
             costDistributions.append(plans[self.subtasks[child]].cost[childsAlternative])
             durationDistributions.append(plans[self.subtasks[child]].duration[childsAlternative])
-            durDistr[ind].append(plans[self.subtasks[child]].duration[childsAlternative])
+            #durDistr[ind].append(plans[self.subtasks[child]].duration[childsAlternative])
             if plans[self.subtasks[child]].qualityEV == 0:
                 childWithZeroQ = True
-
+        
         # TODO: what if qaf is q_exactly_one?
         fun = ""
         if qaf == "q_min":
@@ -1041,6 +1045,7 @@ class Plan(object):
         elif qaf == 'q_sum_all' or qaf == "q_seq_sum_all":
             fun = "sum"
             if childWithZeroQ:
+                print "zero q child"
                 return [{0: 1.0}, {maxint: 1.0}, {maxint: 1.0}]
         else:
             rospy.logerr('Case for qaf \"%s\" is not defined.', qaf)
@@ -1048,20 +1053,23 @@ class Plan(object):
 
         Q = helper_functions.cartesianProductOfDistributions(qualityDistributions, fun)
         C = helper_functions.cartesianProductOfDistributions(costDistributions, "sum")
-        Ds = []
-        for i in range(len(durDistr)):
-            if len(durDistr[i]) > 1:
-                Ds.append(helper_functions.cartesianProductOfDistributions(durDistr[i], "sum"))
-            elif len(durDistr[i]) == 1:
-                Ds.append(durDistr[i][0])
+        # Ds = []
+        # # print durDistr
+        # for i in range(len(durDistr)):
+        #     if len(durDistr[i]) > 1:
+        #         Ds.append(helper_functions.cartesianProductOfDistributions(durDistr[i], "sum"))
+        #     elif len(durDistr[i]) == 1:
+        #         Ds.append(durDistr[i][0])
 
-        if len(Ds) > 1:
-            D = helper_functions.cartesianProductOfDistributions(Ds, "max")
-        elif len(Ds) == 1:
-            D = Ds[0]
-        else:
-            D = {0: 1}
-        # D = helper_functions.cartesianProductOfDistributions(durationDistributions, "sum") #TODO !!! duration is NOT a sum !!!
+        # print Ds
+        # raw_input()
+        # if len(Ds) > 1:
+        #     D = helper_functions.cartesianProductOfDistributions(Ds, "max")
+        # elif len(Ds) == 1:
+        #     D = Ds[0]
+        # else:
+        #     D = {0: 1}
+        D = helper_functions.cartesianProductOfDistributions(durationDistributions, "sum") #TODO !!! duration is NOT a sum !!!
 
         return [Q, D, C]
 
@@ -1076,7 +1084,9 @@ class Plan(object):
         del self.durationEV[i]
         del self.completedTasks[i]
 
-        del self.alternatives[i]
+        if len(self.alternatives) > 0:
+            del self.alternatives[i]
+        del self.childrenAlternativeIndex[i]
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-from ummc_agent_lib.taems.taems import Node
+from gem_mission_control_lib.taems.taems import Node
 
 class Resource(Node):
     """

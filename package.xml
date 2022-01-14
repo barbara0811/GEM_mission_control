@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>GEM_mission_control</name>
+  <name>gem_mission_control</name>
   <version>0.0.0</version>
-  <description>The GEM_mission_control package</description>
+  <description>The gem_mission_control package</description>
   <maintainer email="barbara.arbanas@fer.hr">barbara</maintainer>
 
   <!-- One license tag required, multiple allowed, one license per tag -->

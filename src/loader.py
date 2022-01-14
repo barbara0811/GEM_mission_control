@@ -7,9 +7,9 @@ import random
 import string
 from copy import deepcopy
 
-from ummc_agent_lib.taems.taems import Method, TaemsTree, TaskGroup
-from ummc_agent_lib.taems.resources import ConsumableResource, NonConsumableResource
-from ummc_agent_lib.taems.interrelationships import IRConsumes, IRDisables, IREnables, IRFacilitates, IRHinders, IRLimits, IRProduces
+from gem_mission_control_lib.taems.taems import Method, TaemsTree, TaskGroup
+from gem_mission_control_lib.taems.resources import ConsumableResource, NonConsumableResource
+from gem_mission_control_lib.taems.interrelationships import IRConsumes, IRDisables, IREnables, IRFacilitates, IRHinders, IRLimits, IRProduces
 
 
 class Loader(object):

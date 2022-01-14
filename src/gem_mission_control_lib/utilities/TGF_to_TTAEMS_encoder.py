@@ -3,7 +3,7 @@
 __author__ = 'barbanas'
 
 import sys
-from gpgp_agent import taems
+from gem_mission_control_lib.taems import taems
 
 class Task(object):
 

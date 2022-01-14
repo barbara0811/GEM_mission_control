@@ -2,6 +2,7 @@ __author__ = 'barbanas'
 
 import itertools
 from sys import maxint
+import numpy as np
 
 
 def cartesianProductOfDistributions(listOfDistributions, function):
@@ -81,12 +82,11 @@ def cartesianProduct(setList, removeDuplicates, sort):
 
 
 def calcExpectedValue(distribution):
-    EV = 0
 
-    for i in distribution.keys():
-        EV += distribution[i] * i
+    i = np.array(distribution.keys())
+    ev = np.array(distribution.values())
 
-    return EV
+    return sum(i*ev)
 
 
 def probXSmallerThanVal(distribution, val):

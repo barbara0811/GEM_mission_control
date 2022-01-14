@@ -6,7 +6,8 @@ from sys import maxint
 from copy import deepcopy
 from collections import OrderedDict
 
-from utilities import helper_functions
+from gem_mission_control_lib.utilities import helper_functions
+from gem_mission_control_lib.taems.interrelationships import Interrelationship, IREnables
 
 
 class TaemsTree(object):
@@ -18,7 +19,7 @@ class TaemsTree(object):
     Attributes:
         agent_classes (list[str]): Labels of all agents included in the execution of methods in taems tree.
         tasks (dict[Task]): Tasks in the tree in form of: {task/method label: TaskGroup/Method object}
-        rootTask (list[str]): A list with one! element, label of root task.
+        root (TaskGroup): Tree root task
         methodLabels (list[str]): Labels of atomic methods.
         resources (dict): {Resource label: Resource object}.
         IRs (dict): Interrelationships in the tree in form of {IR label: Interrelationship object}.
@@ -28,7 +29,8 @@ class TaemsTree(object):
     def __init__(self):
         self.agent_classes = []
         self.tasks = OrderedDict()
-        self.rootTask = []
+        self.root = None
+        self.root_label = None
         self.methodLabels = []
         self.resources = OrderedDict()
         self.IRs = OrderedDict()
@@ -53,7 +55,8 @@ class TaemsTree(object):
         tree = cls()
         tree.agent_classes = agent_classes
         tree.tasks = tasks
-        tree.rootTask = [root]
+        tree.root_label = root
+        tree.root = tasks[root]
         tree.methodLabels = [key for key, value in tasks.items() if type(
             value).__name__ == 'Method']
         tree.IRs = IRs
@@ -61,17 +64,17 @@ class TaemsTree(object):
         return tree
 
     @staticmethod
-    def load_from_file(filename):
+    def load_from_file(filepath):
         """
         Load taems tree from file.
 
         Args:
-            filename (str): Path to file.
+            filepath (str): Path to file.
 
         Returns:
             Loaded taems tree as a TaemsTree object.
         """
-        with open(filename, 'r') as in_file:
+        with open(filepath, 'r') as in_file:
             type_node = None
             root = None
             values = {}
@@ -271,56 +274,21 @@ class TaemsTree(object):
         Return a copy of the tree.
         """
         new_tree = TaemsTree.init_with_values(deepcopy(self.agent_classes),
-                                              deepcopy(self.rootTask[0]),
+                                              self.root_label,
                                               deepcopy(self.tasks),
                                               deepcopy(self.IRs),
                                               deepcopy(self.resources))
         return new_tree
 
-    def instantiate(self, taems_id):
-        """
-        Replace template placeholders in tree with actual mission IDs.
+    def write_task_structure_to_file(self, file, task):
+        file.write(str(task))
+        file.write('\n\n')
 
-        Args:
-            taems_id (int): Mission ID.
-        """
-        pattern = r'(\[[^\]]*)X([^[]*\])'
-        replacement = r'\g<1>%d\g<2>' % taems_id
+        if task.subtasks is not None:
+            for st in task.subtasks:
+                self.write_task_structure_to_file(file, self.tasks[st])
 
-        # Replace placeholders in tasks
-        new_tasks = OrderedDict()
-        for key, value in self.tasks.items():
-            value.label = re.sub(pattern, replacement, value.label)
-            if value.subtasks is not None:
-                value.subtasks = [re.sub(pattern, replacement, x)
-                                  for x in value.subtasks]
-            value.supertasks = [re.sub(pattern, replacement, x)
-                                for x in value.supertasks]
-            new_key = re.sub(pattern, replacement, key)
-            new_tasks[new_key] = value
-        self.tasks = new_tasks
-
-        # Replace placeholder in root task
-        self.rootTask = [re.sub(pattern, replacement, self.rootTask[0])]
-
-        # Replace placeholders in method labels
-        self.methodLabels = [re.sub(pattern, replacement, x)
-                             for x in self.methodLabels]
-
-        # Replace placeholders in resources
-        # Not yet implemented
-
-        # Replace placeholders in IRs
-        new_IRs = OrderedDict()
-        for key, value in self.IRs.items():
-            value.label = re.sub(pattern, replacement, value.label)
-            value.From = re.sub(pattern, replacement, value.From)
-            value.To = re.sub(pattern, replacement, value.To)
-            new_key = re.sub(pattern, replacement, key)
-            new_IRs[new_key] = value
-        self.IRs = new_IRs
-
-    def dump_to_file(self, filename, mode='w'):
+    def write_to_file(self, filename, mode='w'):
         """
         Dump taems tree structure to the file with given filename.
 
@@ -328,37 +296,30 @@ class TaemsTree(object):
             filename (str): Name of the file.
             mode (str): 'w' for overwriting, 'a' for appending.
         """
-        with open(filename, mode) as dump_file:
-            if len(self.rootTask) == 0:
-                dump_file.write('% This is an empty taems file\n')
+        with open(filename, mode) as file:
+            if len(self.root_label) == 0:
+                file.write('% This is an empty taems file\n')
             else:
-                # First, write root task.
-                dump_file.write(str(self.tasks[self.rootTask[0]]))
-                dump_file.write('\n\n')
-                # Then, write all other tasks.
-                for label, task in self.tasks.items():
-                    if label != self.rootTask[0]:
-                        dump_file.write(str(task))
-                        dump_file.write('\n\n')
+                self.write_task_structure_to_file(file, self.root)
                 # Next, write IRs.
                 for IR in self.IRs.values():
-                    dump_file.write(str(IR))
-                    dump_file.write('\n\n')
+                    file.write(str(IR))
+                    file.write('\n\n')
                 # Finally, write resources
                 for res in self.resources.values():
-                    dump_file.write(str(res))
-                    dump_file.write('\n\n')
+                    file.write(str(res))
+                    file.write('\n\n')
 
     def __str__(self):
-        if len(self.rootTask) == 0:
+        if len(self.root_label) == 0:
             return '% This is an empty taems file\n'
         else:
             str_buffer = []
             # First, write root task.
-            str_buffer.append(str(self.tasks[self.rootTask[0]]))
+            str_buffer.append(str(self.root))
             # Then, write all other tasks.
             for label, task in self.tasks.items():
-                if label != self.rootTask[0]:
+                if label != self.root_label:
                     str_buffer.append(str(task))
             # Next, write IRs.
             for IR in self.IRs.values():
@@ -443,13 +404,12 @@ class TaemsTree(object):
         Args:
             agent_labels (list[str]): Agent labels to leave in the tree.
         """
-        root_task = self.tasks[self.rootTask[0]]
-
         # If root task doesn't have at least one of the specified agents,
         # result is an empty tree.
-        intersection = set(agent_labels) & set(root_task.agent)
+        intersection = set(agent_labels) & set(self.root.agent)
         if len(intersection) == 0:
-            self.rootTask = None
+            self.root = None
+            self.root_label = None
         else:
             # Find tasks that need to be removed.
             to_remove = []
@@ -457,6 +417,9 @@ class TaemsTree(object):
                 intersection = set(agent_labels) & set(task.agent)
                 if len(intersection) == 0:
                     to_remove.append(task.label)
+                    # Remove as subtask
+                    for sup in self.tasks[task.label].supertasks:
+                        self.tasks[sup].subtasks.remove(task.label)
                 else:
                     task.agent = list(intersection)
             # Remove tasks and methods.
@@ -490,7 +453,8 @@ class TaemsTree(object):
         result.methodLabels = deepcopy(first.methodLabels)
         result.methodLabels.extend(second.methodLabels)
 
-        result.rootTask = deepcopy(first.rootTask)
+        result.root_label = deepcopy(first.root_label)
+        result.root = deepcopy(first.root)
 
         result.resources = deepcopy(first.resources)
         result.resources.update(second.resources)
