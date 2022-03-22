@@ -204,6 +204,9 @@ class MissionCoordinator(object):
                 logger.info(
                     '***FINISHED MISSION***: %s[%s]\n', msg.root_task, msg.mission_id)
 
+    def done_planning_cb(self, msg):
+        self.done_planning = True
+
     def msg_hello_callback(self, msg):
         """
         Callback function for "/peer_discovery" topic.
